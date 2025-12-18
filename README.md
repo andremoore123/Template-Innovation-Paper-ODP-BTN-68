@@ -35,7 +35,7 @@ Agar tampilan sesuai standar desain angkatan, upload file berikut ke folder root
 
 ### **2\. Kompilasi (Compile)**
 
-1. Buka file utama: Innovation\_Paper\_BTN\_Final.tex.  
+1. Buka file utama: main.tex.  
 2. Jalankan kompilasi (rekomendasi: **pdfLaTeX** atau **LuaLaTeX**).  
 3. File-file bab (bab1.tex, References.bib, dll) akan otomatis dibuat oleh sistem.
 
@@ -48,7 +48,7 @@ Setelah kompilasi pertama, edit isi makalah Anda pada file-file yang terbentuk:
 
 ## **📂 Struktur File**
 
-├── Innovation\_Paper\_BTN\_Final.tex  \# File Utama (JANGAN DIHAPUS)  
+├── main.tex  \# File Utama (JANGAN DIHAPUS)  
 ├── References.bib                  \# Daftar Pustaka  
 ├── Cover.tex                       \# Layout Judul  
 ├── Bab-X.tex                       \# File Isi Materi  
