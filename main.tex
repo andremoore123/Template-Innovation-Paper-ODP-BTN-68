@@ -1,0 +1,211 @@
+% ================================================================
+% 1. SETUP & PREAMBLE (SESUAI TEMPLATE ANDA)
+% ================================================================
+% Menggunakan class 'book' agar support \chapter
+\documentclass[12pt, a4paper, oneside]{book} 
+
+% --- MARGIN ---
+% Margin Bawah (bottom) diubah menjadi 5.5cm sesuai kode Anda
+\usepackage[left=3cm, right=3cm, top=4cm, bottom=5.5cm]{geometry}
+
+\usepackage[utf8]{inputenc}
+\usepackage[bahasa]{babel}
+\usepackage{indentfirst} % Spasi untuk paragraf pertama
+\usepackage{sectsty}     % Untuk styling judul section
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{eso-pic}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{natbib}      % Untuk Daftar Pustaka
+\usepackage[bookmarks,hypertexnames=false,debug]{hyperref}
+\usepackage{titletoc}
+\usepackage{tabularx}
+\usepackage{etoolbox}
+\usepackage{colortbl}    % Untuk warna tabel gantt chart
+
+% --- PENGATURAN JUDUL BAB & SUB-BAB (Sesuai Template) ---
+\usepackage[compact]{titlesec} 
+
+% --- KONFIGURASI DAFTAR GAMBAR & TABEL (TITLETOC) ---
+% 1. Menghilangkan jarak antar bab (vertical space)
+\makeatletter
+\patchcmd{\@chapter}{\addtocontents{lof}{\protect\addvspace{10\p@}}}{}{}{}
+\patchcmd{\@chapter}{\addtocontents{lot}{\protect\addvspace{10\p@}}}{}{}{}
+\makeatother
+
+% 2. Mengatur format entry agar tidak ada indentasi (Rata Kiri)
+% [0pt] : Mengatur indentasi kiri menjadi 0 (menempel margin kiri)
+\titlecontents{figure}[0pt]
+  {} 
+  {\thecontentslabel\hspace{1em}} % Format label nomor (misal: 1.1) + spasi
+  {}
+  {\titlerule*[0.5pc]{.}\contentspage} % Garis titik-titik + nomor halaman
+
+\titlecontents{table}[0pt]
+  {}
+  {\thecontentslabel\hspace{1em}}
+  {}
+  {\titlerule*[0.5pc]{.}\contentspage}
+  
+% Font khusus untuk Chapter (Tengah, Besar, Bold)
+\newcommand{\bigsize}{\fontsize{16pt}{14pt}\selectfont}
+\titleformat{\chapter}[display]
+  {\centering\bigsize\bfseries} % Format teks
+  {\chaptertitlename\ \thechapter} % Label "BAB I"
+  {10pt} % Jarak antara "BAB I" dan "JUDUL"
+  {\bigsize} % Format judul
+
+% Mengatur Spasi/Padding Chapter (Atas dan Bawah)
+% \titlespacing*{command}{left}{before-sep}{after-sep}
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt} 
+
+% Styling Section (Mirip template: Large, Bold)
+\sectionfont{\large\bfseries}
+
+% Penomoran Romawi untuk Chapter (I, II, III)
+\renewcommand{\thechapter}{\Roman{chapter}}
+\renewcommand\thesection{\arabic{chapter}.\arabic{section}}
+\renewcommand\thesubsection{\thesection.\arabic{subsection}}
+\renewcommand{\theequation}{\arabic{chapter}.\arabic{equation}}
+\renewcommand{\thefigure}{\arabic{chapter}.\arabic{figure}}
+\renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
+
+% Nama Daftar Pustaka
+\renewcommand\bibname{Daftar Pustaka}
+\addto{\captionsbahasa}{\renewcommand{\bibname}{Daftar Pustaka}}
+
+% --- SPACING KONTEN ---
+\linespread{1} 
+
+% ================================================================
+% 2. KONFIGURASI HEADER/FOOTER (LAYOUT BTN)
+% ================================================================
+
+% --- Background ---
+\newcommand\BackgroundPic{
+    \put(0,0){
+        \parbox[b][\paperheight]{\paperwidth}{%
+            \vfill
+            \centering
+            \IfFileExists{background.png}{
+                % MODIFIKASI: Width 80% dari kertas, Height tetap full kertas
+                \includegraphics[width=0.2\paperwidth,height=0.4\paperheight]{background.png}
+            }{
+                \begin{tikzpicture}
+                    \fill[gray!5] (0,0) rectangle (\paperwidth,\paperheight);
+                \end{tikzpicture}
+            }
+            \vfill
+        }
+    }
+}
+% CATATAN: AddToShipoutPicture dihapus dari sini agar tidak muncul di Cover.
+% Perintah ini akan dipanggil setelah Cover selesai.
+
+% --- Header & Footer ---
+% Kita gunakan 'fancy' untuk semua halaman (termasuk halaman awal Bab)
+\pagestyle{fancy}
+\fancyhf{} 
+\renewcommand{\headrulewidth}{0pt}
+\setlength{\headheight}{50pt}
+
+% Paksa halaman awal Bab (yang biasanya 'plain') menjadi 'fancy' agar header tetap muncul
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+  \fancyhead[C]{%
+    \begin{tikzpicture}[remember picture, overlay]
+        \node[anchor=north, inner sep=0pt] at (current page.north) {
+            \IfFileExists{header.png}{
+                \includegraphics[width=\paperwidth]{header.png} 
+            }{
+                \fbox{\parbox{\textwidth}{\centering \textbf{[HEADER GAMBAR]} \\ \small Upload \texttt{header.png}}}
+            }
+        };
+    \end{tikzpicture}
+  }
+  \fancyfoot[C]{%
+    \begin{tikzpicture}[remember picture, overlay]
+         \node[anchor=south, inner sep=0pt] at (current page.south) {
+             \IfFileExists{footer.png}{
+                 \includegraphics[width=\paperwidth]{footer.png}
+             }{
+                 \fbox{\parbox{\textwidth}{\centering \textbf{[FOOTER GAMBAR]} \\ \small Halaman \thepage}}
+             }
+         };
+    \end{tikzpicture}
+  }
+}
+
+% Setting default fancy (untuk halaman isi lainnya)
+\fancyhead[C]{%
+    \begin{tikzpicture}[remember picture, overlay]
+        \node[anchor=north, inner sep=0pt] at (current page.north) {
+            \IfFileExists{header.png}{
+                \includegraphics[width=\paperwidth]{header.png} 
+            }{
+                \fbox{\parbox{\textwidth}{\centering \textbf{[HEADER GAMBAR]} \\ \small Upload \texttt{header.png}}}
+            }
+        };
+    \end{tikzpicture}
+}
+
+\fancyfoot[C]{%
+    \begin{tikzpicture}[remember picture, overlay]
+         \node[anchor=south, inner sep=0pt] at (current page.south) {
+             \IfFileExists{footer.png}{
+                 \includegraphics[width=\paperwidth]{footer.png}
+             }{
+                 \fbox{\parbox{\textwidth}{\centering \textbf{[FOOTER GAMBAR]} \\ \small Halaman \thepage}}
+             }
+         };
+    \end{tikzpicture}
+}
+
+% List spacing adjustments
+\setlist[itemize]{label=-}
+
+% ================================================================
+% 3. DOKUMEN UTAMA
+% ================================================================
+\begin{document}
+
+% --- Halaman Judul ---
+\AddToShipoutPicture{\BackgroundPic}
+\input{Cover}
+
+% --- Front Matter (Dihilangkan sesuai request) ---
+\frontmatter 
+\pagenumbering{roman}
+\phantomsection
+\input{Abstrak}
+\phantomsection
+\addcontentsline{toc}{chapter}{Daftar Isi}
+\tableofcontents
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Daftar Gambar}
+\listoffigures
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Daftar Tabel}
+\listoftables
+
+% --- Main Content ---
+\mainmatter
+\pagenumbering{arabic}
+\input{Bab-1}
+\input{Bab-2}
+\input{Bab-3}
+
+% --- Back Matter ---
+\backmatter
+\addcontentsline{toc}{chapter}{Daftar Pustaka}
+\bibliographystyle{plain} 
+\bibliography{References}
+
+\input{Lampiran}
+
+\end{document}

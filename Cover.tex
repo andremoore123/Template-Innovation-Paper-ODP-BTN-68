@@ -1,0 +1,44 @@
+% --- Halaman Judul ---
+\begin{titlepage}
+    % === KODE UNTUK FULL PAGE IMAGE COVER ===
+    \AddToShipoutPictureBG*{%
+        \put(0,0){%
+            \parbox[b][\paperheight]{\paperwidth}{%
+                \vfill
+                \includegraphics[width=\paperwidth,height=\paperheight]{cover.png}
+            }%
+        }%
+    }
+    % ========================================
+
+    % Pengaturan Rata Kiri & Font
+    \raggedright
+    \sffamily 
+    
+    % 1. Tulisan "Innovation Paper"
+    {\fontsize{12}{13}\selectfont \textbf{INNOVATION PAPER}} \\[0.5cm]
+    
+    % 2. Tulisan "Judul" 
+    % PERBAIKAN: Mengubah {42} menjadi {38} agar jarak baris judul lebih rapat.
+    {\fontsize{36}{25}\selectfont \textbf{JUDUL PENELITIAN ATAU INOVASI DITULIS DI SINI DENGAN HURUF KAPITAL}\par} 
+    \vspace{1.5cm}
+
+    % 3, 4, 5, 6 & Konfigurasi Baru (DE Brief BSN)
+    % PERBAIKAN: Menggunakan {12}{13.5} agar teks lebih padat (single spacing ketat).
+    \noindent
+    \begin{minipage}[t]{0.55\textwidth} % Kolom Kiri
+        {\fontsize{12}{13.5}\selectfont 
+        Dipersembahkan oleh:\\[0.3cm] % Jarak diperkecil (0.5cm -> 0.3cm) agar pas "1x enter"
+        \textbf{\underline{NAMA PENULIS / TIM}} \\ 
+        DIVISI / UNIT KERJA 
+        }
+    \end{minipage}%
+    \hspace{0.5cm} 
+    \begin{minipage}[t]{0.4\textwidth} % Kolom Kanan
+        {\fontsize{12}{13.5}\selectfont 
+        Untuk\\[0.3cm] % Jarak disamakan
+        \textbf{NAMA STAKEHOLDER / TUJUAN}
+        }
+    \end{minipage}
+    \vfill
+\end{titlepage}
