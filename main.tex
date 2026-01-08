@@ -9,12 +9,12 @@
 \usepackage[left=3cm, right=3cm, top=4cm, bottom=5.5cm]{geometry}
 
 \usepackage[utf8]{inputenc}
+\usepackage{lmodern}
 \usepackage[bahasa]{babel}
 \usepackage{indentfirst} % Spasi untuk paragraf pertama
 \usepackage{sectsty}     % Untuk styling judul section
 \usepackage{graphicx}
 \usepackage{xcolor}
-\usepackage{tikz}
 \usepackage{eso-pic}
 \usepackage{fancyhdr}
 \usepackage{enumitem}
@@ -24,6 +24,48 @@
 \usepackage{tabularx}
 \usepackage{etoolbox}
 \usepackage{colortbl}    % Untuk warna tabel gantt chart
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{listings}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, shadows, shapes.multipart, calc}
+\usepackage{float}
+\usepackage[T1]{fontenc}
+\usepackage{algorithm}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+
+% Definisi Style untuk Tabel Database
+\tikzset{
+    dbtable/.style={
+        rectangle split,
+        rectangle split parts=2,
+        draw=black,
+        rounded corners=2pt,
+        fill=white,
+        drop shadow,
+        text width=3.8cm,
+        rectangle split part fill={gray!20, white},
+        font=\scriptsize
+    },
+    % Definisi Style Garis Relasi One-to-Many
+    onetomany/.style={
+        -{Straight Barb[angle=60:3mm]}, % Ujung panah (Many)
+        thick,
+        darkgray,
+        % Bar (One) kita tambahkan manual lewat path decoration atau arrow tip awal
+        % Cara paling aman di arrows.meta untuk One-to-Many adalah:
+        {Bar[width=3mm]}-{Straight Barb[angle=60:3mm]} 
+    },
+    % Definisi Style untuk Label Teks pada Garis
+    rel-label/.style={
+        font=\tiny\itshape,
+        text=blue!40!black,
+        fill=white,
+        inner sep=1pt,
+        anchor=center
+    }
+}
 
 % --- PENGATURAN JUDUL BAB & SUB-BAB (Sesuai Template) ---
 \usepackage[compact]{titlesec} 
@@ -90,7 +132,6 @@
             \vfill
             \centering
             \IfFileExists{background.png}{
-                % MODIFIKASI: Width 80% dari kertas, Height tetap full kertas
                 \includegraphics[width=0.2\paperwidth,height=0.4\paperheight]{background.png}
             }{
                 \begin{tikzpicture}
@@ -101,68 +142,63 @@
         }
     }
 }
-% CATATAN: AddToShipoutPicture dihapus dari sini agar tidak muncul di Cover.
-% Perintah ini akan dipanggil setelah Cover selesai.
+\AddToShipoutPicture{\BackgroundPic}
 
 % --- Header & Footer ---
-% Kita gunakan 'fancy' untuk semua halaman (termasuk halaman awal Bab)
 \pagestyle{fancy}
 \fancyhf{} 
 \renewcommand{\headrulewidth}{0pt}
 \setlength{\headheight}{50pt}
 
-% Paksa halaman awal Bab (yang biasanya 'plain') menjadi 'fancy' agar header tetap muncul
+% --- DEFINISI FOOTER CUSTOM (WHITE TEXT ON IMAGE) ---
+\newcommand{\CustomFooter}{%
+    \begin{tikzpicture}[remember picture, overlay]
+         % 1. LAYER BELAKANG: Gambar Footer
+         % Node ini ditulis duluan, jadi dia ada di lapisan paling bawah
+         \node[anchor=south, inner sep=0pt] at (current page.south) {
+             \IfFileExists{footer.png}{
+                 \includegraphics[width=\paperwidth]{footer.png}
+             }{
+                 % Placeholder hitam jika gambar tidak ada (supaya teks putih terlihat)
+                 \fbox{\parbox{\textwidth}{\centering \textbf{[FOOTER GAMBAR]} \\ \small Area Footer}}
+             }
+         };
+         
+         % 2. LAYER DEPAN: Nomor Halaman (Send to Front)
+         % Node ini ditulis belakangan, otomatis menimpa gambar (overlay)
+         % text=white : Membuat warna font jadi putih
+         \node[anchor=south east, font=\bfseries\small, text=white] 
+             at ([xshift=-2cm, yshift=0.6cm]current page.south east) {
+             \thepage
+         };
+    \end{tikzpicture}
+}
+
+% --- DEFINISI HEADER CUSTOM ---
+\newcommand{\CustomHeader}{%
+    \begin{tikzpicture}[remember picture, overlay]
+        \node[anchor=north, inner sep=0pt] at (current page.north) {
+            \IfFileExists{header.png}{
+                \includegraphics[width=\paperwidth]{header.png} 
+            }{
+                \fbox{\parbox{\textwidth}{\centering \textbf{[HEADER GAMBAR]} \\ \small Upload \texttt{header.png}}}
+            }
+        };
+    \end{tikzpicture}
+}
+
+
+% A. Konfigurasi untuk Halaman Awal Bab (Plain)
 \fancypagestyle{plain}{
   \fancyhf{}
   \renewcommand{\headrulewidth}{0pt}
-  \fancyhead[C]{%
-    \begin{tikzpicture}[remember picture, overlay]
-        \node[anchor=north, inner sep=0pt] at (current page.north) {
-            \IfFileExists{header.png}{
-                \includegraphics[width=\paperwidth]{header.png} 
-            }{
-                \fbox{\parbox{\textwidth}{\centering \textbf{[HEADER GAMBAR]} \\ \small Upload \texttt{header.png}}}
-            }
-        };
-    \end{tikzpicture}
-  }
-  \fancyfoot[C]{%
-    \begin{tikzpicture}[remember picture, overlay]
-         \node[anchor=south, inner sep=0pt] at (current page.south) {
-             \IfFileExists{footer.png}{
-                 \includegraphics[width=\paperwidth]{footer.png}
-             }{
-                 \fbox{\parbox{\textwidth}{\centering \textbf{[FOOTER GAMBAR]} \\ \small Halaman \thepage}}
-             }
-         };
-    \end{tikzpicture}
-  }
+  \fancyhead[C]{\CustomHeader}
+  \fancyfoot[C]{\CustomFooter}
 }
 
-% Setting default fancy (untuk halaman isi lainnya)
-\fancyhead[C]{%
-    \begin{tikzpicture}[remember picture, overlay]
-        \node[anchor=north, inner sep=0pt] at (current page.north) {
-            \IfFileExists{header.png}{
-                \includegraphics[width=\paperwidth]{header.png} 
-            }{
-                \fbox{\parbox{\textwidth}{\centering \textbf{[HEADER GAMBAR]} \\ \small Upload \texttt{header.png}}}
-            }
-        };
-    \end{tikzpicture}
-}
-
-\fancyfoot[C]{%
-    \begin{tikzpicture}[remember picture, overlay]
-         \node[anchor=south, inner sep=0pt] at (current page.south) {
-             \IfFileExists{footer.png}{
-                 \includegraphics[width=\paperwidth]{footer.png}
-             }{
-                 \fbox{\parbox{\textwidth}{\centering \textbf{[FOOTER GAMBAR]} \\ \small Halaman \thepage}}
-             }
-         };
-    \end{tikzpicture}
-}
+% B. Konfigurasi untuk Halaman Isi (Fancy)
+\fancyhead[C]{\CustomHeader}
+\fancyfoot[C]{\CustomFooter}
 
 % List spacing adjustments
 \setlist[itemize]{label=-}
@@ -170,8 +206,29 @@
 % ================================================================
 % 3. DOKUMEN UTAMA
 % ================================================================
-\begin{document}
 
+% ==========================================
+%    KONFIGURASI DATA TANDA TANGAN
+% ==========================================
+% Ubah data di bawah ini sesuai kebutuhan:
+\newcommand{\SignCity}{Jakarta}
+\newcommand{\SignDate}{\today} % Bisa diganti manual, misal: 30 Desember 2025
+
+% Data Kepala Departemen (Kiri)
+\newcommand{\HeadName}{Nama Stakeholder / Tujuan}
+
+% Data Penulis (Kanan)
+\newcommand{\MyName}{Nama Penulis / Tim}
+\newcommand{\MyDivision}{Divisi / Unit Kerja}
+
+% Saklar Tanda Tangan (true = muncul, false = hilang)
+\newif\ifshowsignatures
+% \showsignaturestrue  
+\showsignaturesfalse 
+% ==========================================
+
+
+\begin{document}
 % --- Halaman Judul ---
 \AddToShipoutPicture{\BackgroundPic}
 \input{Cover}
@@ -199,6 +256,7 @@
 \input{Bab-1}
 \input{Bab-2}
 \input{Bab-3}
+\input{Bab-4}
 
 % --- Back Matter ---
 \backmatter
@@ -206,6 +264,6 @@
 \bibliographystyle{plain} 
 \bibliography{References}
 
-\input{Lampiran}
+% \input{Lampiran}
 
 \end{document}
